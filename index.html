@@ -3,81 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vibe Coding 成果展示 · vibe-coding-showcase</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 21C7 16.5 2 12.8 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.4.8 4.5 2.1C13.1 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 4.3-5 8-10 12.5z' fill='%23c13024'/></svg>">
-<style>
-:root{--ink:#171310;--bone:#ead9b8;--bone2:#cabb98;--dim:#93815f;--blood:#c13024;--blood2:#e04430;--gold:#c9a13b}
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  background:var(--ink);color:var(--bone);
-  font-family:"Microsoft YaHei","PingFang SC",sans-serif;
-  font-size:15.5px;line-height:1.75;
-}
-body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9;
-  background:radial-gradient(130% 100% at 50% -10%,transparent 55%,rgba(0,0,0,.55))}
-.wrap{max-width:780px;margin:0 auto;padding:70px 22px 60px;position:relative;z-index:1}
-.en{font-family:"Comic Sans MS","Chalkboard SE",cursive}
-h1{font-size:clamp(32px,6vw,50px);font-weight:900;letter-spacing:4px;line-height:1.2;text-shadow:0 3px 0 rgba(0,0,0,.6)}
-h1 .en{display:block;font-size:clamp(15px,2.4vw,21px);font-weight:700;letter-spacing:2px;color:var(--blood2);transform:rotate(-1.2deg);margin-top:4px}
-.lead{margin:22px 0 8px;color:#cdbb98;max-width:40em}
-.lead b{color:var(--bone)}
-.eyebrow{color:var(--dim);font-size:13px;letter-spacing:.5px}
-.exhibit{
-  margin-top:44px;display:block;text-decoration:none;
-  background:#201811;border:2px solid #40301f;
-  border-radius:22px 8px 20px 9px/9px 18px 8px 22px;
-  padding:26px 26px 22px;transform:rotate(-.4deg);
-  transition:transform .15s,border-color .15s;
-}
-.exhibit:hover{transform:rotate(0) translateY(-3px);border-color:#6b4a33}
-.exhibit .no{font-family:"Comic Sans MS",cursive;color:var(--blood2);font-size:19px;font-weight:700;letter-spacing:1px}
-.exhibit h2{font-size:24px;font-weight:900;letter-spacing:2px;margin:6px 0 10px}
-.exhibit h2 .en{font-size:14px;color:var(--dim);margin-left:10px;letter-spacing:1px}
-.exhibit p{color:#c4b48e;font-size:14.5px}
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 18px}
-.tag{font-size:12.5px;color:#d8c8a4;border:1.5px solid #4a3823;border-radius:999px;padding:4px 12px}
-.go{
-  display:inline-block;background:var(--bone);color:#241a12;font-weight:700;
-  text-decoration:none;padding:9px 22px;font-size:14.5px;letter-spacing:1px;
-  border-radius:14px 5px 13px 6px/6px 12px 5px 13px;
-}
-.go:hover{background:#fff0cf}
-.soon{
-  margin-top:26px;text-align:center;color:#8a7a5c;font-size:14px;
-  border:2px dashed #3a2b1c;border-radius:18px 7px 16px 8px/8px 14px 7px 18px;
-  padding:18px;
-}
-footer{margin-top:60px;padding-top:20px;border-top:1px solid #352818;font-size:12.5px;color:#8a7a5c}
-</style>
+<title>vibe coding 成果展示</title>
 </head>
 <body>
-<div class="wrap">
-  <p class="eyebrow">Loki 的实验场 · <span class="en">github.com/l67077955-cyber/vibe-coding-showcase</span></p>
-  <h1>Vibe Coding 成果展示<span class="en">What can vibe coding achieve — right now</span></h1>
-  <p class="lead">
-    我在持续尝试用 AI 结对建造各种东西——<b>从一句话到一个能用的产品</b>。这个仓库就是成果展馆：
-    每一件展品都是纯 vibe coding 出来的，附上可点开就能玩的在线版本。
-  </p>
 
-  <a class="exhibit" href="isaac-ultra-secret-room/">
-    <span class="no">EXHIBIT 01</span>
-    <h2>以撒·究极隐藏房搜寻指南<span class="en">Ultra Secret Room Field Guide</span></h2>
-    <p>《以撒的结合：忏悔+》最难找房间的可视化攻略：程序按游戏真实规则随机铺 13×13 地形，
-    玩家亲手开红钥匙找究极隐藏房，配候选洞热区图与逐步图解——把"生成算法"变成低龄玩家也能玩懂的互动教具。</p>
-    <div class="tags">
-      <span class="tag">单文件 · 零依赖</span>
-      <span class="tag">程序化地形生成</span>
-      <span class="tag">交互模拟</span>
-      <span class="tag">机制核对自 wiki</span>
-    </div>
-    <span class="go">进入展品 →</span>
-  </a>
+<h1>vibe coding 成果展示</h1>
 
-  <div class="soon">更多实验正在路上……每个新成果都会在这里占一个展位。</div>
+<p>What can vibe coding achieve &mdash; right now.<br>
+持续实验中：每一件都是"一句话需求 &rarr; 可用产品"的纯 vibe coding 成果。目录朴素，点进去才见真章。</p>
 
-  <footer>
-    vibe-coding-showcase · 展品均由 <span class="en">opencode × GLM</span> 结对建造 · 单文件离线可看
-  </footer>
-</div>
+<hr>
+
+<ul>
+<li><a href="isaac-ultra-secret-room/">01 &middot; 以撒的结合：究极隐藏房搜寻指南</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Ultra Secret Room Field Guide &mdash; 按游戏真实规则程序化生成地形的交互实验室（2026-09）</li>
+</ul>
+
+<hr>
+
+<p><a href="https://github.com/l67077955-cyber/vibe-coding-showcase">github.com/l67077955-cyber/vibe-coding-showcase</a></p>
+
 </body>
 </html>
