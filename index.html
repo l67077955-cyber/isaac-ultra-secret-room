@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>究极隐藏房搜寻指南 · Ultra Secret Room</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 21C7 16.5 2 12.8 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.4.8 4.5 2.1C13.1 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 4.3-5 8-10 12.5z' fill='%23c13024'/></svg>">
+<style>
+:root{
+  --ink:#171310;
+  --panel:#201811;
+  --wood:#1d1610;
+  --bone:#ead9b8;
+  --bone2:#cabb98;
+  --dim:#93815f;
+  --blood:#c13024;
+  --blood2:#e04430;
+  --gold:#c9a13b;
+  --cell:38px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--ink);
+  color:var(--bone);
+  font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+  font-size:15.5px;
+  line-height:1.75;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:9;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:9;
+  background:radial-gradient(130% 100% at 50% -10%,transparent 55%,rgba(0,0,0,.55));
+}
+.wrap{max-width:1100px;margin:0 auto;padding:0 22px 70px;position:relative;z-index:1}
+a{color:var(--gold)}
+.en{font-family:"Comic Sans MS","Chalkboard SE",cursive}
+::selection{background:var(--blood);color:#fff}
+
+.hero{padding:72px 0 8px}
+.hero .ver{color:var(--dim);font-size:13.5px;letter-spacing:.5px}
+.hero .ver .en{color:#7a6a4c}
+h1{
+  font-size:clamp(38px,7vw,62px);
+  font-weight:900;
+  letter-spacing:4px;
+  line-height:1.15;
+  margin-top:6px;
+  text-shadow:0 3px 0 rgba(0,0,0,.6);
+}
+h1 .en{
+  display:block;
+  font-size:clamp(16px,2.6vw,24px);
+  font-weight:700;
+  letter-spacing:2px;
+  color:var(--blood2);
+  transform:rotate(-1.2deg);
+  margin-top:2px;
+}
+.drips{display:block;margin:10px 0 18px}
+.lead{max-width:46em;color:#cdbb98;font-size:16.5px}
+.lead b{color:var(--bone)}
+.lead .warn{color:var(--blood2);font-weight:700}
+
+section{margin-top:88px}
+h2{
+  font-size:27px;font-weight:900;letter-spacing:2px;
+  display:inline-block;padding-bottom:14px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 120 6'><path d='M2 4 C 20 1, 40 5, 60 3 S 100 2, 118 4' stroke='%23c13024' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>") no-repeat left bottom/140px 8px;
+}
+.sub{color:var(--dim);margin:14px 0 26px;max-width:52em}
+.sub b{color:var(--bone2)}
+
+.btn,.chip,.seg button{
+  font-family:inherit;font-size:14.5px;font-weight:700;
+  cursor:pointer;border:none;letter-spacing:1px;
+  border-radius:14px 5px 13px 6px/6px 12px 5px 13px;
+  transition:transform .12s,background .12s,color .12s;
+}
+.btn{background:var(--bone);color:#241a12;padding:10px 22px}
+.btn:hover{background:#fff0cf;transform:translateY(-1px) rotate(-.6deg)}
+.chip{
+  background:transparent;color:var(--bone2);
+  padding:9px 16px;
+  box-shadow:inset 0 0 0 2px #55432c;
+}
+.chip:hover{color:var(--bone)}
+.chip[aria-pressed="true"]{background:var(--blood);color:#fff3e0;box-shadow:none}
+.seg{display:inline-flex;box-shadow:inset 0 0 0 2px #55432c;border-radius:12px 4px 11px 5px/5px 11px 4px 12px;overflow:hidden}
+.seg button{background:transparent;color:var(--dim);padding:9px 16px}
+.seg button.on{background:var(--bone);color:#241a12}
+:is(.btn,.chip,.seg button):focus-visible{outline:2px dashed var(--blood2);outline-offset:3px}
+
+.lab{
+  background:var(--panel);
+  border:2px solid #40301f;
+  border-radius:22px 8px 20px 9px/9px 18px 8px 22px;
+  padding:24px 24px 18px;
+  box-shadow:0 14px 40px rgba(0,0,0,.45);
+}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.controls .gap{flex:1}
+.labboard{display:flex;gap:22px;margin-top:20px;flex-wrap:wrap;position:relative}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(13,var(--cell));
+  grid-auto-rows:var(--cell);
+  gap:3px;
+  padding:15px;
+  background:#120d09;
+  border:1px solid #3a2b1c;
+  border-radius:10px;
+  align-self:flex-start;
+}
+.cell{
+  position:relative;border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(234,217,184,.045);
+  box-shadow:inset 0 0 0 1px rgba(234,217,184,.04);
+}
+.cell i{font-style:normal;font-weight:700;font-size:calc(var(--cell)*.42);user-select:none}
+.cell b.door{position:absolute;background:#241a12}
+b.d0{top:-2px;left:31%;width:38%;height:5px}
+b.d1{right:-2px;top:31%;height:38%;width:5px}
+b.d2{bottom:-2px;left:31%;width:38%;height:5px}
+b.d3{left:-2px;top:31%;height:38%;width:5px}
+.room{background:var(--bone2);color:#3a2f24;box-shadow:inset 0 0 0 2px #8f7c58}
+.room.start{background:#e6d6ae}
+.room.boss{background:#8a2f24;color:#f2e3c8;box-shadow:inset 0 0 0 2px #5c1c14}
+.room.treasure{background:#d3b264}
+.room.shop{background:#b9c08e}
+.room.curse{background:#6d4b58;color:#ead9b8;box-shadow:inset 0 0 0 2px #4a3038}
+.room.secret,.room.super{
+  background:rgba(202,187,152,.14);color:var(--bone);
+  box-shadow:none;border:2px dashed #b8a678;
+}
+.room.red{background:#57201a;color:#f0c9a8;box-shadow:inset 0 0 0 2px #872f22}
+.room.red b.door{background:#f0c9a8}
+.room.usr{
+  background:var(--blood2);color:#fff3e0;
+  box-shadow:inset 0 0 0 2px #7c1f12,0 0 20px rgba(224,68,48,.6);
+}
+.room.usr.peek{opacity:.92}
+.room.usr b.door{background:#7c1f12}
+.cell.cand{cursor:help}
+.cell.c3{box-shadow:inset 0 0 0 2px #ff6a4d;animation:cpulse 1.7s infinite}
+.cell.c2{box-shadow:inset 0 0 0 2px #e0913f}
+.cell.c1{box-shadow:inset 0 0 0 2px #7d8fa6}
+.cnb{
+  position:absolute;top:-7px;right:-7px;z-index:3;
+  font-size:10.5px;font-weight:700;padding:1px 5px;border-radius:9px;
+}
+.c3 .cnb{background:#ff6a4d;color:#200b06}
+.c2 .cnb{background:#e0913f;color:#241304}
+.c1 .cnb{background:#7d8fa6;color:#101820}
+.cell.openable{cursor:pointer;background:rgba(224,68,48,.12)}
+.cell.openable:hover{box-shadow:inset 0 0 0 2px var(--blood2)}
+.cell.blocked{cursor:not-allowed;background:repeating-linear-gradient(45deg,rgba(138,47,36,.16) 0 5px,transparent 5px 10px)}
+.cell.hintcell{box-shadow:inset 0 0 0 2px #ffd76a;animation:hintp 1.1s infinite}
+.cell.new{animation:redin .38s}
+.grid.pop .room{animation:pop .32s both}
+.grid.shake{animation:shk .42s}
+.side{flex:1;min-width:255px}
+.status{
+  background:#16100b;border:1px solid #3a2b1c;border-radius:9px;
+  padding:12px 15px;font-size:14px;color:#cdbb98;min-height:64px;
+}
+.status b{color:var(--bone)}
+.legend{
+  display:grid;grid-template-columns:1fr 1fr;gap:5px 18px;
+  margin-top:16px;font-size:12.5px;color:#b0a078;
+}
+.legend .sw{
+  display:inline-block;width:13px;height:13px;border-radius:3px;
+  margin-right:7px;vertical-align:-2px;background:var(--bone2);
+  box-shadow:inset 0 0 0 1.5px #8f7c58;
+}
+.sw.start{background:#e6d6ae}
+.sw.boss{background:#8a2f24}
+.sw.treasure{background:#d3b264}
+.sw.shop{background:#b9c08e}
+.sw.curse{background:#6d4b58}
+.sw.secret{background:transparent;border:1.5px dashed #b8a678;box-shadow:none}
+.sw.red{background:#57201a}
+.sw.usr{background:var(--blood2)}
+.sw.c3{background:transparent;box-shadow:inset 0 0 0 2px #ff6a4d}
+.sw.c2{background:transparent;box-shadow:inset 0 0 0 2px #e0913f}
+.sw.c1{background:transparent;box-shadow:inset 0 0 0 2px #7d8fa6}
+.toast{
+  margin-top:14px;background:var(--bone);color:#241a12;font-weight:700;
+  font-size:14px;padding:11px 14px;border-radius:14px 5px 13px 6px/6px 12px 5px 13px;
+  opacity:0;transform:translateY(6px);transition:.25s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:none}
+.tip{
+  position:absolute;z-index:8;max-width:210px;
+  background:#0d0906;color:var(--bone);font-size:12.5px;line-height:1.55;
+  border:1px solid #6b4a33;border-radius:7px;padding:7px 10px;
+  pointer-events:none;opacity:0;transition:opacity .12s;
+}
+.tip.show{opacity:1}
+.labfoot{margin-top:16px;font-size:12.5px;color:#8a7a5c}
+
+.koujue{
+  margin-top:30px;text-align:center;
+  background:rgba(193,48,36,.08);
+  border:2px dashed #8a2f24;border-radius:20px 7px 18px 8px/8px 16px 7px 20px;
+  padding:16px 20px;
+  font-size:19px;font-weight:900;letter-spacing:3px;color:var(--bone);
+}
+.koujue small{display:block;font-size:12.5px;font-weight:400;letter-spacing:1px;color:var(--dim);margin-top:6px}
+
+.steps3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:6px}
+.stepcard{
+  background:var(--wood);border:1.5px solid #3a2b1c;
+  border-radius:18px 7px 16px 8px/8px 14px 7px 18px;
+  padding:20px 20px 18px;
+}
+.stepcard:nth-child(2){transform:rotate(.5deg)}
+.stepcard:nth-child(1){transform:rotate(-.4deg)}
+.stepcard .no{font-family:"Comic Sans MS",cursive;color:var(--blood2);font-size:21px;font-weight:700}
+.stepcard h3{font-size:18.5px;font-weight:900;letter-spacing:1.5px;margin:4px 0 12px}
+.stepcard p{font-size:14px;color:#c4b48e}
+.stepcard p b{color:var(--bone)}
+.stepcard svg{display:block;margin:2px auto 12px}
+.stepcard figcaption{font-size:12.5px;color:var(--dim);text-align:center;margin-top:8px}
+
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:640px}
+th,td{padding:13px 15px;text-align:left;border-bottom:1px solid #352818;vertical-align:top}
+thead th{font-size:15.5px;font-weight:900;letter-spacing:1px;color:var(--bone)}
+tbody th{color:var(--dim);font-weight:700;white-space:nowrap}
+td{color:#c4b48e}
+td b{color:var(--bone)}
+.col-usr{background:rgba(193,48,36,.07);box-shadow:inset 2px 0 0 var(--blood)}
+.col-usr b{color:#ff9a85}
+
+.tgroups{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.tgroup{
+  background:var(--wood);border:1.5px solid #3a2b1c;
+  border-radius:18px 7px 16px 8px/8px 14px 7px 18px;padding:20px;
+}
+.tgroup h3{font-size:16.5px;font-weight:900;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px dashed #4a3823}
+.tgroup li{list-style:none;padding:7px 0;border-bottom:1px solid #2b2115;font-size:14px;color:#c4b48e}
+.tgroup li:last-child{border-bottom:none}
+.tgroup li b{color:var(--bone)}
+.tgroup li .en{color:#8a7a5c;font-size:12.5px;margin-left:6px}
+
+.pro3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.procard{background:var(--wood);border-left:4px solid var(--blood);border-radius:8px;padding:16px 18px}
+.procard h3{font-size:16px;font-weight:900;letter-spacing:1px;margin-bottom:6px}
+.procard h3 span{color:var(--blood2);margin-right:8px;font-family:"Comic Sans MS",cursive}
+.procard p{font-size:13.8px;color:#c4b48e}
+
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px 20px}
+.note{
+  position:relative;background:#231a12;border:1px solid #3f3020;
+  border-radius:15px 6px 14px 7px/7px 13px 6px 15px;
+  padding:20px 18px 16px;transform:rotate(-.5deg);
+}
+.note:nth-child(even){transform:rotate(.5deg)}
+.note::before{
+  content:"";position:absolute;top:-9px;left:50%;margin-left:-34px;
+  width:68px;height:17px;background:rgba(233,217,184,.13);
+  border:1px solid rgba(233,217,184,.08);
+  transform:rotate(-2deg);
+}
+.note h3{font-size:15.5px;font-weight:900;color:#ffb3a0;margin-bottom:6px}
+.note h3::before{content:"×";color:var(--blood2);font-family:"Comic Sans MS",cursive;margin-right:8px;font-size:18px}
+.note p{font-size:13.8px;color:#c4b48e}
+.note p b{color:var(--bone)}
+
+.chips{display:flex;flex-wrap:wrap;gap:11px}
+.chipk{
+  background:#241b12;border:1.5px solid #4a3823;border-radius:999px;
+  padding:9px 16px;font-size:13.5px;color:#d8c8a4;
+}
+.chipk b{color:var(--gold)}
+
+footer{
+  margin-top:96px;padding-top:22px;border-top:1px solid #352818;
+  font-size:12.5px;color:#8a7a5c;line-height:2;
+}
+
+@keyframes pop{from{transform:scale(.25);opacity:0}}
+@keyframes redin{from{transform:scale(.4);background:var(--blood2)}}
+@keyframes cpulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.5)}}
+@keyframes hintp{0%,100%{box-shadow:inset 0 0 0 2px #ffd76a}50%{box-shadow:inset 0 0 0 4px #ffd76a}}
+@keyframes shk{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+
+@media (max-width:880px){
+  :root{--cell:calc((100vw - 96px)/13)}
+  .labboard{flex-direction:column}
+  .grid{align-self:center}
+  section{margin-top:64px}
+  .hero{padding-top:48px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <p class="ver">《以撒的结合：忏悔+》· <span class="en">The Binding of Isaac: Repentance+</span></p>
+  <h1>究极隐藏房搜寻指南<span class="en">Ultra Secret Room Field Guide</span></h1>
+  <svg class="drips" viewBox="0 0 340 30" width="340" height="30" aria-hidden="true">
+    <path d="M6 5 Q 90 13 170 8 T 334 6" stroke="#a5241b" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M84 10 q 2 9 -1 15" stroke="#a5241b" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M206 8 q 2 11 -2 17" stroke="#a5241b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <p class="lead">
+    它是全游戏藏得最深的房间：<b>不跟任何房间挨着</b>——<span class="warn">炸弹炸不开</span>、<span class="warn">全图道具也照不亮</span>，门更不会自己出现。
+    想见到它只有一条路：看懂地图上的“洞”，再用<b>红钥匙</b>敲进去。先记住一句口诀：<b>洞要空，圈要净，借房三间起。</b>
+  </p>
+</header>
+
+<section id="lab" aria-label="地形实验室">
+  <h2>地形实验室 · 亲手掀一层地下室</h2>
+  <p class="sub">
+    下面每一层都由程序<b>按忏悔+的真实规则</b>随机铺成：先长出普通房间，把 <b>Boss 房</b>安排在离起点最远的死胡同，
+    再塞进宝箱房、商店，藏好<b>普通隐藏房</b>和<b>超级隐藏房</b>——最后，如果存在合格的“洞”，<b>究极隐藏房</b>就按权重躲进去（没有合格洞位时，这层干脆不生成）。
+    先自己找找看，再开红钥匙验证！
+  </p>
+  <div class="lab">
+    <div class="controls">
+      <button class="btn" id="regen">再掷一层</button>
+      <div class="seg" role="group" aria-label="层的大小">
+        <button data-size="s">小层</button>
+        <button data-size="m" class="on">中层</button>
+        <button data-size="l">大层</button>
+      </div>
+      <span class="gap"></span>
+      <button class="chip" id="redm" aria-pressed="true">红钥匙模式</button>
+      <button class="chip" id="xray" aria-pressed="false">看候选洞</button>
+      <button class="chip" id="hint">提示一下</button>
+      <button class="chip" id="peek">偷看答案</button>
+      <button class="chip" id="reset">重置本层</button>
+    </div>
+    <div class="labboard">
+      <div class="grid" id="grid"></div>
+      <aside class="side">
+        <div class="status" id="status" aria-live="polite"></div>
+        <div class="legend">
+          <span><span class="sw"></span>普通房间</span>
+          <span><span class="sw start"></span>起点</span>
+          <span><span class="sw boss"></span>Boss 房（王）</span>
+          <span><span class="sw treasure"></span>宝箱房（宝）</span>
+          <span><span class="sw shop"></span>商店（店）</span>
+          <span><span class="sw curse"></span>诅咒房（咒）</span>
+          <span><span class="sw secret"></span>普通隐藏房（隐）</span>
+          <span><span class="sw secret"></span>超级隐藏房（超）</span>
+          <span><span class="sw red"></span>你开的红房（红）</span>
+          <span><span class="sw usr"></span>究极隐藏房（究）</span>
+          <span><span class="sw c3"></span>热门洞（3+ 房）</span>
+          <span><span class="sw c2"></span>备选洞（2 房）</span>
+          <span><span class="sw c1"></span>冷门洞（1 房）</span>
+        </div>
+        <div class="toast" id="toast"></div>
+      </aside>
+    </div>
+    <p class="labfoot">
+      玩法：红钥匙模式下，点任何贴着房间的空格就能开一间红房；红房一旦贴着究极隐藏房，门会当场自动打开。
+      开“看候选洞”会给所有空格标上它能借到的房间数——数字越大越红，越可能是它家。
+    </p>
+  </div>
+  <div class="koujue">
+    洞要空 · 圈要净 · 借房三间起
+    <small>洞心四边全空格；外圈不贴 Boss 房 / 隐藏房 / 超级隐藏房 / 诅咒房；能借到 3 间房以上最热门（单格约 11.5 倍概率）</small>
+  </div>
+</section>
+
+<section aria-label="三步找洞法">
+  <h2>三步找洞法</h2>
+  <p class="sub">文字看不懂没关系，对着图和上面的实验室，掷几层就懂了。</p>
+  <div class="steps3">
+    <figure class="stepcard">
+      <span class="no">Step 1</span>
+      <h3>找洞：洞心四边全空</h3>
+      <svg width="150" height="150" viewBox="0 0 150 150" role="img" aria-label="洞心示意图">
+        <g stroke="#2b2115" stroke-width="1">
+          <path d="M15 15h120M15 39h120M15 63h120M15 87h120M15 111h120M15 135h120"/>
+          <path d="M15 15v120M39 15v120M63 15v120M87 15v120M111 15v120M135 15v120"/>
+        </g>
+        <rect x="40" y="40" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="88" y="40" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="64" y="16" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="40" y="88" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="88" y="88" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="65.5" y="41.5" width="18" height="18" rx="3" fill="rgba(224,145,63,.10)" stroke="#e0913f" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <rect x="41.5" y="65.5" width="18" height="18" rx="3" fill="rgba(224,145,63,.10)" stroke="#e0913f" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <rect x="89.5" y="65.5" width="18" height="18" rx="3" fill="rgba(224,145,63,.10)" stroke="#e0913f" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <rect x="65.5" y="89.5" width="18" height="18" rx="3" fill="rgba(224,145,63,.10)" stroke="#e0913f" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <rect x="65.5" y="65.5" width="18" height="18" rx="3" fill="rgba(224,68,48,.16)" stroke="#ff5b40" stroke-width="2" stroke-dasharray="5 3"/>
+        <text x="74.5" y="78" font-size="10" fill="#ffb3a0" text-anchor="middle" font-weight="700">洞心</text>
+      </svg>
+      <p>打开地图，找一个<b>四边都是空格</b>的格子——它谁也不贴，这才是究极隐藏房的地基。它外圈那一圈虚线空格，就是将来开红房的位置。</p>
+      <figcaption>虚线格 = 未来的红房位</figcaption>
+    </figure>
+    <figure class="stepcard">
+      <span class="no">Step 2</span>
+      <h3>数房：外圈能借几间</h3>
+      <svg width="150" height="150" viewBox="0 0 150 150" role="img" aria-label="数房示意图">
+        <g stroke="#2b2115" stroke-width="1">
+          <path d="M15 15h120M15 39h120M15 63h120M15 87h120M15 111h120M15 135h120"/>
+          <path d="M15 15v120M39 15v120M63 15v120M87 15v120M111 15v120M135 15v120"/>
+        </g>
+        <rect x="40" y="40" width="21" height="21" rx="3" fill="#d3b264" stroke="#8f6f2f" stroke-width="1.5"/>
+        <rect x="88" y="40" width="21" height="21" rx="3" fill="#d3b264" stroke="#8f6f2f" stroke-width="1.5"/>
+        <rect x="40" y="88" width="21" height="21" rx="3" fill="#d3b264" stroke="#8f6f2f" stroke-width="1.5"/>
+        <rect x="64" y="16" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="88" y="88" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="65.5" y="41.5" width="18" height="18" rx="3" fill="rgba(224,145,63,.10)" stroke="#e0913f" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <rect x="41.5" y="65.5" width="18" height="18" rx="3" fill="rgba(224,145,63,.10)" stroke="#e0913f" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <rect x="89.5" y="65.5" width="18" height="18" rx="3" fill="rgba(224,145,63,.10)" stroke="#e0913f" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <rect x="65.5" y="89.5" width="18" height="18" rx="3" fill="rgba(224,145,63,.10)" stroke="#e0913f" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <rect x="65.5" y="65.5" width="18" height="18" rx="3" fill="rgba(224,68,48,.16)" stroke="#ff5b40" stroke-width="2" stroke-dasharray="5 3"/>
+        <circle cx="122" cy="26" r="11" fill="#c13024"/>
+        <text x="122" y="30.5" font-size="11" fill="#fff3e0" text-anchor="middle" font-weight="700">3+</text>
+      </svg>
+      <p>数一数外圈能“<b>借到</b>”几间房（金色就是借到的）。<b>≥3 间 → 热门</b>（每个这样的洞约是 2 房洞的 11.5 倍）；2 间 → 备选；1 间 → 冷门。另外外圈不许贴 Boss 房、隐藏房、超级隐藏房、诅咒房，贴了整洞作废。</p>
+      <figcaption>金色房间 = 外圈借到的房</figcaption>
+    </figure>
+    <figure class="stepcard">
+      <span class="no">Step 3</span>
+      <h3>开门：红房贴脸即触发</h3>
+      <svg width="150" height="150" viewBox="0 0 150 150" role="img" aria-label="开门示意图">
+        <g stroke="#2b2115" stroke-width="1">
+          <path d="M15 15h120M15 39h120M15 63h120M15 87h120M15 111h120M15 135h120"/>
+          <path d="M15 15v120M39 15v120M63 15v120M87 15v120M111 15v120M135 15v120"/>
+        </g>
+        <rect x="64" y="16" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="40" y="40" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="88" y="88" width="21" height="21" rx="3" fill="#cabb98" stroke="#8f7c58" stroke-width="1.5"/>
+        <rect x="41.5" y="65.5" width="18" height="18" rx="3" fill="rgba(234,217,184,.05)" stroke="#5a4a33" stroke-width="1.2"/>
+        <rect x="89.5" y="65.5" width="18" height="18" rx="3" fill="rgba(234,217,184,.05)" stroke="#5a4a33" stroke-width="1.2"/>
+        <rect x="65.5" y="89.5" width="18" height="18" rx="3" fill="rgba(234,217,184,.05)" stroke="#5a4a33" stroke-width="1.2"/>
+        <rect x="65.5" y="41.5" width="18" height="18" rx="3" fill="#e04430" stroke="#7c1f12" stroke-width="2"/>
+        <text x="74.5" y="55" font-size="10" fill="#fff3e0" text-anchor="middle" font-weight="700">红</text>
+        <rect x="72" y="36.5" width="5" height="5" fill="#241a12"/>
+        <rect x="65.5" y="65.5" width="18" height="18" rx="3" fill="#ff5b40" stroke="#7c1f12" stroke-width="2"/>
+        <text x="74.5" y="79" font-size="10" fill="#fff3e0" text-anchor="middle" font-weight="700">究</text>
+        <path d="M90 62 l6 -6 m0 6 l-6 -6" stroke="#ffd76a" stroke-width="1.6"/>
+        <path d="M58 90 l-5 5 m5 -5 l-5 -5" stroke="#ffd76a" stroke-width="1.6"/>
+      </svg>
+      <p>走进洞旁边的房间，用红钥匙<b>朝洞的方向</b>开红房。开出的红房一旦贴着究极隐藏房，<b>门会当场自动打开</b>——里面必有专属物品池的 1 件奖励，还常有店主和钥匙砖小机关。</p>
+      <figcaption>贴脸 → 自动开门</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section aria-label="隐藏房对比">
+  <h2>三兄弟比一比 · 别再认错门</h2>
+  <p class="sub">很多新手把它当成“藏得更深的隐藏房”，其实它们的进门方式<b>完全不同</b>。</p>
+  <div class="tscroll">
+    <table>
+      <thead>
+        <tr><th></th><th>普通隐藏房</th><th>超级隐藏房</th><th class="col-usr">究极隐藏房</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>它贴着谁</th>
+          <td>贴着<b>房间尽量多</b>的空格（一般 3~4 间）</td>
+          <td>只贴着 <b>Boss 房</b></td>
+          <td class="col-usr"><b>谁也不贴！</b>躲在四边全是空格的“洞”里</td>
+        </tr>
+        <tr>
+          <th>怎么进去</th>
+          <td>在公共墙上<b>放炸弹</b></td>
+          <td>同样<b>炸弹</b></td>
+          <td class="col-usr"><b>红钥匙系</b>开红房贴脸触发，或“月亮？”牌传送</td>
+        </tr>
+        <tr>
+          <th>全图照得亮吗</th>
+          <td>照得亮（The Mind 等）</td>
+          <td>照得亮</td>
+          <td class="col-usr"><b>照不亮！</b>只有裂纹宝球、秘密之书光环、符文碎片可以</td>
+        </tr>
+        <tr>
+          <th>里面有什么</th>
+          <td>店主、硬币、偶尔有物品</td>
+          <td>奖励看楼层，常常很肥</td>
+          <td class="col-usr"><b>专属物品池</b>必有 1 件，另有店主、钥匙砖等机关</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section aria-label="工具箱">
+  <h2>你的工具箱</h2>
+  <div class="tgroups">
+    <div class="tgroup">
+      <h3>开门组 · 红房系统</h3>
+      <ul>
+        <li><b>红钥匙</b><span class="en">Red Key</span><br>使用后开出一间红房——本攻略的主角。</li>
+        <li><b>水晶钥匙</b><span class="en">Crystal Key</span><br>同样能开出红房。</li>
+        <li><b>裂纹钥匙</b><span class="en">Cracked Key</span><br>低配版红钥匙，也能开红房。</li>
+        <li><b>该隐之魂</b><span class="en">Soul of Cain</span><br>魂卡，同样能开红房。</li>
+      </ul>
+    </div>
+    <div class="tgroup">
+      <h3>点亮组 · 极少数能照亮它</h3>
+      <ul>
+        <li><b>裂纹宝球</b><span class="en">Cracked Orb</span><br>能在地图上直接点亮它。</li>
+        <li><b>秘密之书</b><span class="en">Book of Secrets</span><br>配合美德之书的光环，也能点亮。</li>
+        <li><b>符文碎片</b><span class="en">Rune Shard</span><br>同样能把它标在地图上。</li>
+      </ul>
+    </div>
+    <div class="tgroup">
+      <h3>传送组 · 走后门</h3>
+      <ul>
+        <li><b>月亮？</b><span class="en">XVIII - The Moon?</span><br>直接把你传进去，还会自动铺一条红房回路回家。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section aria-label="高手三招">
+  <h2>高手三招</h2>
+  <p class="sub">同样是花一把红钥匙，会读图的人一刀顶别人三刀。</p>
+  <div class="pro3">
+    <div class="procard">
+      <h3><span>1</span>从热门扫到冷门</h3>
+      <p>先排查所有 3+ 房的热门洞，全都排除后再看 2 房备选，最后才考虑 1 房冷门——概率权重就是这样排的。</p>
+    </div>
+    <div class="procard">
+      <h3><span>2</span>一刀多验</h3>
+      <p>开红房时，优先选“能连到最多其他候选洞”的那格。一间红房同时排查好几个洞，炸弹……不对，钥匙不白花。</p>
+    </div>
+    <div class="procard">
+      <h3><span>3</span>顺手赚房</h3>
+      <p>如果一刀能开到 Boss 挑战房这类平时进不去的房间，就算没找到它也血赚——红房本身就是新资源。</p>
+    </div>
+  </div>
+</section>
+
+<section aria-label="常见翻车">
+  <h2>翻车现场 · 新手六连坑</h2>
+  <div class="notes">
+    <div class="note">
+      <h3>拿炸弹到处炸</h3>
+      <p>没用！它和任何房间都<b>不共用墙</b>，你根本找不到地方下炸弹。省点炸药吧。</p>
+    </div>
+    <div class="note">
+      <h3>指望全图道具</h3>
+      <p>The Mind 也<b>照不亮</b>它。能点亮它的只有裂纹宝球、秘密之书光环和符文碎片这几样。</p>
+    </div>
+    <div class="note">
+      <h3>盯着贴 Boss 的圈</h3>
+      <p>红房<b>开不出贴着 Boss 房的格子</b>，所以洞的外圈只要挨着 Boss 房，整个洞直接排除。</p>
+    </div>
+    <div class="note">
+      <h3>以为每层都有</h3>
+      <p>没有合格洞位时，这层<b>干脆不生成</b>。扫完热门和备选洞还没有？别头铁，下楼。</p>
+    </div>
+    <div class="note">
+      <h3>圈里夹着隐藏房</h3>
+      <p>外圈贴着普通隐藏房、超级隐藏房或<b>诅咒房</b>的红房是“无效邻居”——整洞作废，换下一个。</p>
+    </div>
+    <div class="note">
+      <h3>进去之后乱逛</h3>
+      <p>它的门<b>只从外面靠近才会自动开</b>。想从里面再开别的门？再掏一把红钥匙吧。</p>
+    </div>
+  </div>
+</section>
+
+<section aria-label="冷知识">
+  <h2>冷知识</h2>
+  <div class="chips">
+    <span class="chipk">热门洞（3+ 房）单格概率约是备选洞的 <b>11.5 倍</b></span>
+    <span class="chipk">全层没有热门洞时，<b>2 房洞</b>接棒；再没有才轮到 1 房洞</span>
+    <span class="chipk">只剩 1 房洞时，贴房间正边和贴角落<b>概率一样</b></span>
+    <span class="chipk">用“月亮？”没找到门就传进去，会自动铺一条<b>红房回家路</b></span>
+    <span class="chipk">Mega Satan 之门正上方还有个<b>著名特例位</b></span>
+    <span class="chipk">镜像世界（下界暗层）里的它是<b>空房</b>，别白找</span>
+  </div>
+</section>
+
+<footer>
+  非官方粉丝攻略，仅供学习交流 · 《以撒的结合》及“忏悔+”© Edmund McMillen / Nicalis<br>
+  机制核对自 wiki.gg「Secret Room」条目（2026-09）· 地形实验室为简化教学模型：未包含 L 形房间（它会占 2 格、借房按 2 格计）与地图最外圈边框特例，其余判定与实际规则一致 · 单文件离线可看，右键即可另存分享
+</footer>
+
+</div>
+<script>
+(function(){
+'use strict';
+var W=13,H=13;
+var DIRS=[[0,-1],[1,0],[0,1],[-1,0]];
+var LBL={start:'起',boss:'王',treasure:'宝',shop:'店',curse:'咒',secret:'隐',super:'超'};
+var SIZES={s:10,m:13,l:16};
+var WT={3:11.5,2:1,1:0.087};
+var rooms={},usr=null,cands=[],red={},usrFound=false,peeked=false,opened=0,sizeName='m',noUSR=false;
+var state={xray:false,redm:true,lastNew:null,hintK:null,pop:false};
+var seed=0,rs=0;
+var gridEl=document.getElementById('grid');
+var tipEl,toastEl,statusEl,labB,toastTimer=null;
+function rnd(){rs|=0;rs=rs+0x6D2B79F5|0;var t=Math.imul(rs^rs>>>15,1|rs);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}
+function ri(n){return Math.floor(rnd()*n)}
+function K(x,y){return x+','+y}
+function roomAt(x,y){return rooms[K(x,y)]||null}
+function nbRooms(x,y){var r=[],i;for(i=0;i<4;i++){var q=roomAt(x+DIRS[i][0],y+DIRS[i][1]);if(q)r.push(q)}return r}
+function mk(tag,txt){var e=document.createElement(tag);if(txt!==undefined)e.textContent=txt;return e}
+
+function gen(){
+  rooms={};usr=null;cands=[];red={};usrFound=false;peeked=false;opened=0;noUSR=false;
+  state.lastNew=null;state.hintK=null;
+  seed=((Date.now()^(Math.random()*4294967295))>>>0)||1;rs=seed;
+  var target=SIZES[sizeName],count=1,x,y,i,k;
+  rooms[K(6,6)]={x:6,y:6,t:'start'};
+  while(count<target){
+    var fr=[],ws=[],tw=0;
+    for(y=0;y<H;y++)for(x=0;x<W;x++){
+      if(roomAt(x,y))continue;
+      var n=nbRooms(x,y).length;
+      if(n>0){var w=n===1?2.6:(n===2?1.2:0.45);fr.push({x:x,y:y});ws.push(w);tw+=w}
+    }
+    if(!fr.length)break;
+    var r=rnd()*tw,idx=0;
+    for(i=0;i<fr.length;i++){r-=ws[i];if(r<=0){idx=i;break}}
+    rooms[K(fr[idx].x,fr[idx].y)]={x:fr[idx].x,y:fr[idx].y,t:'normal'};count++;
+  }
+  var dist={},qx=[6],qy=[6];
+  dist[K(6,6)]=0;
+  while(qx.length){
+    var cx=qx.shift(),cy=qy.shift();
+    for(i=0;i<4;i++){var nx=cx+DIRS[i][0],ny=cy+DIRS[i][1];k=K(nx,ny);
+      if(rooms[k]!==undefined&&dist[k]===undefined){dist[k]=dist[K(cx,cy)]+1;qx.push(nx);qy.push(ny)}}
+  }
+  var dead=[],all=[];
+  for(k in rooms){var rm=rooms[k];if(rm.t!=='normal')continue;all.push(rm);if(nbRooms(rm.x,rm.y).length===1)dead.push(rm)}
+  dead.sort(function(a,b){return(dist[K(a.x,a.y)]||0)-(dist[K(b.x,b.y)]||0)});
+  if(dead.length){dead[dead.length-1].t='boss'}
+  else{all.sort(function(a,b){return(dist[K(a.x,a.y)]||0)-(dist[K(b.x,b.y)]||0)});if(all.length)all[all.length-1].t='boss'}
+  var rest=dead.filter(function(r2){return r2.t==='normal'});
+  if(rest.length)rest[ri(rest.length)].t='treasure';
+  rest=dead.filter(function(r2){return r2.t==='normal'});
+  if(rest.length)rest[ri(rest.length)].t='shop';
+  rest=dead.filter(function(r2){return r2.t==='normal'});
+  if(rest.length&&rnd()<0.55)rest[ri(rest.length)].t='curse';
+  var best=null,bs=-1e9;
+  for(y=0;y<H;y++)for(x=0;x<W;x++){
+    if(roomAt(x,y))continue;
+    var nb=nbRooms(x,y),s=nb.length*10+rnd(),ba=false;
+    for(i=0;i<nb.length;i++)if(nb[i].t==='boss')ba=true;
+    if(ba)s-=6;
+    if(s>bs){bs=s;best={x:x,y:y}}
+  }
+  if(best)rooms[K(best.x,best.y)]={x:best.x,y:best.y,t:'secret'};
+  outer:
+  for(y=0;y<H;y++)for(x=0;x<W;x++){
+    if(roomAt(x,y))continue;
+    var nb2=nbRooms(x,y);
+    if(nb2.length===1&&nb2[0].t==='boss'){rooms[K(x,y)]={x:x,y:y,t:'super'};break outer}
+  }
+  var forb={boss:1,secret:1,super:1,curse:1};
+  for(y=1;y<H-1;y++)for(x=1;x<W-1;x++){
+    if(roomAt(x,y))continue;
+    var ok=true,ring=[],di;
+    for(di=0;di<4;di++){var rx=x+DIRS[di][0],ry=y+DIRS[di][1];if(roomAt(rx,ry)){ok=false;break}ring.push([rx,ry])}
+    if(!ok)continue;
+    var borrow={},bn=0,bad=false,ci,cj;
+    for(ci=0;ci<4;ci++){
+      var rr=nbRooms(ring[ci][0],ring[ci][1]);
+      for(cj=0;cj<rr.length;cj++){var q2=rr[cj];if(forb[q2.t])bad=true;if(borrow[K(q2.x,q2.y)]===undefined){borrow[K(q2.x,q2.y)]=1;bn++}}
+    }
+    if(bad||bn===0)continue;
+    cands.push({x:x,y:y,cls:bn>=3?3:(bn===2?2:1),n:bn});
+  }
+  var pool=cands.filter(function(c){return c.cls===3});
+  if(!pool.length)pool=cands.filter(function(c){return c.cls===2});
+  if(!pool.length)pool=cands.filter(function(c){return c.cls===1});
+  if(pool.length){
+    var ptw=0,pi;
+    for(pi=0;pi<pool.length;pi++)ptw+=WT[pool[pi].cls];
+    var pr=rnd()*ptw,pickc=pool[0];
+    for(pi=0;pi<pool.length;pi++){pr-=WT[pool[pi].cls];if(pr<=0){pickc=pool[pi];break}}
+    usr=pickc;
+  }else{noUSR=true}
+}
+
+function visType(k){
+  var r=rooms[k];
+  if(!r)return null;
+  if((r.t==='secret'||r.t==='super')&&!state.xray)return null;
+  return r.t;
+}
+function isShown(x,y){
+  var k=K(x,y);
+  if(red[k]!==undefined)return true;
+  if(usr&&usrFound&&usr.x===x&&usr.y===y)return true;
+  return visType(k)!==null;
+}
+function candAt(x,y){
+  for(var i=0;i<cands.length;i++)if(cands[i].x===x&&cands[i].y===y)return cands[i];
+  return null;
+}
+function isAdjBoss(x,y){
+  for(var d=0;d<4;d++){var q=roomAt(x+DIRS[d][0],y+DIRS[d][1]);if(q&&q.t==='boss')return true}
+  return false;
+}
+function visAdj(x,y){
+  var n=0;
+  for(var d=0;d<4;d++){var ax=x+DIRS[d][0],ay=y+DIRS[d][1];if(ax<0||ax>=W||ay<0||ay>=H)continue;if(isShown(ax,ay))n++}
+  return n;
+}
+function doorsFor(c,x,y){
+  for(var d=0;d<4;d++){
+    var ax=x+DIRS[d][0],ay=y+DIRS[d][1];
+    if(ax<0||ax>=W||ay<0||ay>=H)continue;
+    if(isShown(ax,ay)){var b=mk('b');b.className='door d'+d;c.appendChild(b)}
+  }
+}
+function build(){
+  var x,y,k,order=0;
+  gridEl.innerHTML='';
+  gridEl.classList.toggle('pop',state.pop);
+  for(y=0;y<H;y++)for(x=0;x<W;x++){
+    var c=mk('div');
+    c.className='cell';
+    c.dataset.x=x;c.dataset.y=y;
+    k=K(x,y);
+    var vt=visType(k);
+    var isRed=red[k]!==undefined;
+    var showUSR=usr&&usr.x===x&&usr.y===y&&(usrFound||peeked);
+    if(isRed){
+      c.classList.add('room','red');c.appendChild(mk('i','红'));
+      if(state.lastNew===k)c.classList.add('new');
+      if(state.pop){c.style.animationDelay=(order*26)+'ms';order++}
+      doorsFor(c,x,y);
+    }else if(showUSR){
+      c.classList.add('room','usr');
+      if(!usrFound)c.classList.add('peek');
+      c.appendChild(mk('i','究'));
+      if(state.pop){c.style.animationDelay=(order*26)+'ms';order++}
+      doorsFor(c,x,y);
+    }else if(vt){
+      c.classList.add('room',vt);
+      if(LBL[vt])c.appendChild(mk('i',LBL[vt]));
+      if(state.pop){c.style.animationDelay=(order*26)+'ms';order++}
+      doorsFor(c,x,y);
+    }else{
+      var cd=candAt(x,y);
+      if(cd&&state.xray){
+        c.classList.add('cand','c'+cd.cls);
+        var b2=mk('b',String(cd.n));b2.className='cnb';c.appendChild(b2);
+      }
+      if(state.redm){
+        var adj=visAdj(x,y);
+        if(adj>0)c.classList.add(isAdjBoss(x,y)?'blocked':'openable');
+      }
+      if(state.hintK===k)c.classList.add('hintcell');
+    }
+    gridEl.appendChild(c);
+  }
+  if(state.pop)setTimeout(function(){state.pop=false;gridEl.classList.remove('pop')},1600);
+  updateStatus();
+}
+function stars(n){return n<=2?'★★★':(n<=4?'★★':'★')}
+function pad5(n){var s='00000'+n.toString(16).toUpperCase();return s.slice(-5)}
+function updateStatus(){
+  var c3=0,c2=0,c1=0;
+  cands.forEach(function(c){if(c.cls===3)c3++;else if(c.cls===2)c2++;else c1++});
+  var html='层代码 <b>USR-'+pad5(seed)+'</b> · 房间 '+(Object.keys(rooms).length)+' 间<br>';
+  if(usrFound)html+='找到了！用了 '+opened+' 间红房 · 评级 '+stars(opened)+(usr.cls===3?'（它躲在热门洞里）':(usr.cls===2?'（这次躲在备选洞）':'（竟然是冷门洞！）'));
+  else if(noUSR)html+=(state.xray?'这层<b>没有</b>究极隐藏房：不存在合格的洞。':'悄悄说：这层没有合格的洞——不信你自己找。');
+  else if(peeked)html+='偷看答案：它躲在发亮的红格里'+(usr.cls===3?'，正是热门洞':'（这次不在热门洞）');
+  else html+='究极隐藏房藏在某个洞里（也可能没有）。<b>红钥匙模式</b>：点亮空格开门找它！';
+  if(state.xray&&!noUSR)html+='<br>候选洞：热门 '+c3+' · 备选 '+c2+' · 冷门 '+c1;
+  statusEl.innerHTML=html;
+}
+function toast(msg){
+  toastEl.textContent=msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){toastEl.classList.remove('show')},3200);
+}
+function shake(){
+  gridEl.classList.add('shake');
+  setTimeout(function(){gridEl.classList.remove('shake')},460);
+}
+function doHint(){
+  if(usrFound){toast('都找到了，还要什么提示！');return}
+  if(noUSR){toast('这层根本没有究极隐藏房，省点钥匙吧');return}
+  var bestk=null,bestw=-1,x,y,d;
+  for(y=0;y<H;y++)for(x=0;x<W;x++){
+    var k=K(x,y);
+    if(rooms[k]||red[k]!==undefined)continue;
+    if(usr&&usr.x===x&&usr.y===y)continue;
+    if(isAdjBoss(x,y))continue;
+    if(visAdj(x,y)<1)continue;
+    var w=rnd()*0.001;
+    for(d=0;d<4;d++){var cd=candAt(x+DIRS[d][0],y+DIRS[d][1]);if(cd)w+=WT[cd.cls]}
+    if(w>bestw){bestw=w;bestk=k}
+  }
+  if(!bestk||bestw<=0.01){toast('没有值得开的格子了——开“看候选洞”复盘一下？');return}
+  state.hintK=bestk;
+  build();
+  toast('从发亮的这格开红房：能一次排查最多的候选洞');
+}
+
+gridEl.addEventListener('click',function(e){
+  var c=e.target.closest('.cell');
+  if(!c)return;
+  var x=+c.dataset.x,y=+c.dataset.y,k=K(x,y);
+  if(candAt(x,y)&&!state.redm){
+    var cd=candAt(x,y);
+    toast(cd.cls>=3?('热门洞：外圈能借到 '+cd.n+' 间房（约 11.5 倍概率）'):(cd.cls===2?'备选洞：外圈能借到 2 间房':'冷门洞：外圈只能借到 1 间房'));
+    return;
+  }
+  if(!state.redm)return;
+  if(rooms[k]||red[k]!==undefined)return;
+  if(usr&&usr.x===x&&usr.y===y)return;
+  if(isAdjBoss(x,y)){toast('贴着 Boss 房的格子，红钥匙开不了！');shake();return}
+  if(visAdj(x,y)<1){
+    if(candAt(x,y))toast('洞心本身不贴任何房间——先开它外圈的红房，贴脸才会触发开门');
+    return;
+  }
+  red[k]={x:x,y:y};opened++;state.lastNew=k;state.hintK=null;
+  var hit=usr&&!usrFound&&Math.abs(usr.x-x)+Math.abs(usr.y-y)===1;
+  if(hit)usrFound=true;
+  build();
+  if(hit){toast('轰——门自己开了！究极隐藏房！本次用了 '+opened+' 间红房 '+stars(opened));shake()}
+  else if(opened===1)toast('开出第 1 间红房。提示：要开“贴着洞心”的红房才会触发自动开门');
+});
+gridEl.addEventListener('mousemove',function(e){
+  var c=e.target.closest('.cell'),msg='';
+  if(c){
+    var x=+c.dataset.x,y=+c.dataset.y;
+    var cd=candAt(x,y);
+    if(cd&&state.xray)msg=cd.cls>=3?('热门洞 · 外圈能借到 '+cd.n+' 间房（单格约 11.5 倍概率）'):(cd.cls===2?'备选洞 · 外圈能借到 2 间房':'冷门洞 · 外圈只能借到 1 间房');
+    else if(c.classList.contains('blocked'))msg='贴着 Boss 房，红钥匙开不出这格';
+    else if(c.classList.contains('openable'))msg='点这格：开一间红房';
+    else if(c.classList.contains('hintcell'))msg='推荐开这格';
+  }
+  if(msg){
+    tipEl.textContent=msg;
+    tipEl.classList.add('show');
+    var lr=labB.getBoundingClientRect();
+    tipEl.style.left=Math.max(4,Math.min(e.clientX-lr.left+16,lr.width-215))+'px';
+    tipEl.style.top=(e.clientY-lr.top-38)+'px';
+  }else{tipEl.classList.remove('show')}
+});
+gridEl.addEventListener('mouseleave',function(){tipEl.classList.remove('show')});
+
+document.getElementById('regen').addEventListener('click',function(){gen();state.pop=true;build()});
+document.getElementById('xray').addEventListener('click',function(){
+  state.xray=!state.xray;
+  this.setAttribute('aria-pressed',state.xray);
+  build();
+});
+document.getElementById('redm').addEventListener('click',function(){
+  state.redm=!state.redm;
+  this.setAttribute('aria-pressed',state.redm);
+  build();
+});
+document.getElementById('hint').addEventListener('click',doHint);
+document.getElementById('peek').addEventListener('click',function(){
+  if(noUSR){toast('这层真没有：不存在合格的洞');state.xray=true;document.getElementById('xray').setAttribute('aria-pressed','true');build();return}
+  peeked=true;build();
+  toast('答案在此：发红的格子就是它家'+(usr.cls>=3?'（热门洞）':'（居然不在热门洞）'));
+});
+document.getElementById('reset').addEventListener('click',function(){
+  red={};usrFound=false;peeked=false;opened=0;state.lastNew=null;state.hintK=null;build();
+  toast('本层已重置，钥匙退回来了');
+});
+document.querySelectorAll('.seg button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.seg button').forEach(function(s){s.classList.remove('on')});
+    b.classList.add('on');
+    sizeName=b.dataset.size;
+    gen();state.pop=true;build();
+  });
+});
+
+tipEl=document.createElement('div');
+tipEl.className='tip';
+labB=document.querySelector('.labboard');
+labB.appendChild(tipEl);
+toastEl=document.getElementById('toast');
+statusEl=document.getElementById('status');
+gen();
+state.pop=true;
+build();
+})();
+</script>
+</body>
+</html>
