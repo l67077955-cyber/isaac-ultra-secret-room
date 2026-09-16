@@ -1,21 +1,21 @@
-# 究极隐藏房搜寻指南 · Ultra Secret Room Field Guide
+# vibe-coding-showcase
 
-《以撒的结合：忏悔+》（The Binding of Isaac: Repentance+）究极隐藏房（Ultra Secret Room）的中文可视化攻略站。
+**What can vibe coding achieve — right now.** 我的 vibe coding 成果展馆：持续实验中，每件展品都是"一句话需求 → 可用产品"的纯 AI 结对建造，附在线可玩版本。
 
-**在线访问 / Live**: https://l67077955-cyber.github.io/isaac-ultra-secret-room/
+**在线访问 / Live**: https://l67077955-cyber.github.io/vibe-coding-showcase/
 
-## 里面有什么
+## 展品 / Exhibits
 
-- **地形实验室**：按游戏真实铺房规则程序化生成 13×13 楼层，可亲手用"红钥匙"开红房找究极隐藏房，支持候选洞热区、提示、偷看答案、换层重掷
-- **三步找洞法**：洞要空 · 圈要净 · 借房三间起（含图解）
-- **三种隐藏房对比表**、**道具工具箱**、**高手三招**、**新手六坑**、**冷知识**
+| # | 展品 | 在线版 | 说明 |
+|---|------|--------|------|
+| 01 | 以撒·究极隐藏房搜寻指南 | [isaac-ultra-secret-room](https://l67077955-cyber.github.io/vibe-coding-showcase/isaac-ultra-secret-room/) | 《以撒的结合：忏悔+》究极隐藏房可视化攻略：真实规则驱动的程序化地形实验室 + 三步找洞法图解 |
 
-## 技术说明
+## 展品特点
 
-- 单文件 `index.html`，零依赖、零外部资源（系统字体 + 内联 SVG/CSS/JS），离线可看
-- 机制核对自 [wiki.gg「Secret Room」条目](https://bindingofisaacrebirth.wiki.gg/wiki/Secret_Room)（2026-09）
-- 地形实验室为简化教学模型：未含 L 形房间与地图最外圈边框特例，其余判定与实际规则一致
+- 单文件 HTML，零依赖、零外部资源，离线可看
+- 程序化生成、交互模拟、机制经真实资料核对
+- 详见各展品目录内的 README
 
-## 免责声明
+## 工具链
 
-非官方粉丝作品，仅供学习交流。《以撒的结合》及"忏悔+"© Edmund McMillen / Nicalis。
+opencode × GLM · Loki 的实验场
