@@ -30,10 +30,23 @@
     font: 11px/1 Consolas, monospace; color: #cfcfcf; background: #1c1c1c;
     border: 1px solid #3a3a3a; border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px;
   }
+  [hidden] { display: none !important; }
+  .viewbar { display: flex; gap: 8px; }
+  .viewbar button {
+    font: 600 13px/1 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    color: #cfcfcf; background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 7px;
+    padding: 8px 15px; cursor: pointer; transition: background .18s ease, border-color .18s ease, color .18s ease;
+  }
+  .viewbar button:hover { border-color: var(--ink); color: #fff; }
+  .viewbar button.on { background: var(--ink); border-color: var(--ink); color: #06121b; }
+  #orig {
+    max-width: 96vw; max-height: calc(100vh - 160px); border-radius: 6px;
+    box-shadow: 0 22px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
+  }
   svg.main {
     display: block; flex: 0 1 auto;
-    width: min(98vw, calc((100vh - 78px) * 1.53623));
-    width: min(98vw, calc((100dvh - 78px) * 1.53623));
+    width: min(98vw, calc((100vh - 128px) * 1.53623));
+    width: min(98vw, calc((100dvh - 128px) * 1.53623));
     height: auto; min-width: 300px;
     border-radius: 6px;
     box-shadow: 0 22px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
@@ -105,7 +118,11 @@
 </head>
 <body>
 <div class="wrap">
-<p class="hint">蓝色牵引线 = 结构标注（如手绘图）。悬停 <b>线条 / 文字 / 对应区域</b> 弹出小框显示绘制原理，单击可钉住；也可用 <kbd>Tab</kbd> 聚焦标注、<kbd>Enter</kbd> 钉住、<kbd>Esc</kbd> 关闭。</p>
+<p class="hint">蓝色牵引线 = 结构标注（如手绘图）。悬停 <b>线条 / 文字 / 对应区域</b> 弹出小框显示绘制原理，单击可钉住；也可用 <kbd>Tab</kbd> 聚焦标注、<kbd>Enter</kbd> 钉住、<kbd>Esc</kbd> 关闭。按钮可切换查看原始参考图对照。</p>
+<div class="viewbar">
+  <button id="btnRedraw" class="on" type="button">矢量重绘（本页实现）</button>
+  <button id="btnOrig" type="button">原始参考图</button>
+</div>
 <svg class="main" viewBox="-262 -70 1060 690" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A man in a suit raising both hands, captioned ABSOLUTE CINEMA, with blue callout labels">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -411,6 +428,7 @@
     </g>
   </g>
 </svg>
+<img id="orig" src="original.png" alt="原始参考图（仅作对照，页面主体为纯代码矢量重绘）" hidden>
 </div>
 
 <div id="pop" role="status">
@@ -563,6 +581,21 @@ document.addEventListener('click', () => { if (pinned) unpinAll(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && (pinned || pop.style.display === 'block')) unpinAll();
 });
+
+/* 视图切换：矢量重绘 / 原始参考图 */
+const btnRedraw = document.getElementById('btnRedraw');
+const btnOrig = document.getElementById('btnOrig');
+const svgMain = document.querySelector('svg.main');
+const imgOrig = document.getElementById('orig');
+function setView(showOrig) {
+  svgMain.hidden = showOrig;
+  imgOrig.hidden = !showOrig;
+  btnRedraw.classList.toggle('on', !showOrig);
+  btnOrig.classList.toggle('on', showOrig);
+  unpinAll();
+}
+btnRedraw.addEventListener('click', () => setView(false));
+btnOrig.addEventListener('click', () => setView(true));
 </script>
 </body>
 </html>
