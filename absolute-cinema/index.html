@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABSOLUTE CINEMA</title>
+<style>
+  :root {
+    --ink: #41a9e8;
+    --ink-hot: #ffd23f;
+    --panel: rgba(24,24,24,.97);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: #0b0b0b; color: #eee; min-height: 100%;
+    font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  body { background: radial-gradient(120% 90% at 50% 0%, #141414 0%, #0b0b0b 60%); }
+  .wrap {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; padding: 12px 14px 22px; min-height: 100vh; min-height: 100dvh;
+  }
+  .hint {
+    margin: 0; text-align: center; max-width: 900px;
+    font-size: clamp(12px, 1.05vw, 14.5px); line-height: 1.7; color: #9a9a9a;
+    letter-spacing: .02em;
+  }
+  .hint b { color: var(--ink); font-weight: 600; }
+  .hint kbd {
+    font: 11px/1 Consolas, monospace; color: #cfcfcf; background: #1c1c1c;
+    border: 1px solid #3a3a3a; border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px;
+  }
+  svg.main {
+    display: block; flex: 0 1 auto;
+    width: min(98vw, calc((100vh - 78px) * 1.53623));
+    width: min(98vw, calc((100dvh - 78px) * 1.53623));
+    height: auto; min-width: 300px;
+    border-radius: 6px;
+    box-shadow: 0 22px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
+  }
+
+  /* ===== 弹出框 ===== */
+  #pop {
+    position: fixed; display: none; z-index: 9;
+    width: min(368px, calc(100vw - 24px));
+    background: linear-gradient(180deg, rgba(30,30,30,.97), rgba(15,15,15,.97));
+    border: 1px solid rgba(255,210,63,.9); border-radius: 10px;
+    padding: 12px 14px 13px;
+    box-shadow: 0 14px 44px rgba(0,0,0,.68), 0 0 0 1px rgba(255,210,63,.07),
+                inset 0 1px 0 rgba(255,255,255,.06);
+    pointer-events: none;
+    animation: popin .16s ease-out;
+  }
+  @keyframes popin {
+    from { opacity: 0; transform: translateY(7px) scale(.985); }
+    to   { opacity: 1; transform: none; }
+  }
+  #pop .pt {
+    color: var(--ink-hot); font-weight: 700; font-size: 14.5px; letter-spacing: .03em;
+    margin-bottom: 7px; padding-bottom: 7px; border-bottom: 1px solid rgba(255,210,63,.22);
+  }
+  #pop .pd { font-size: 13px; line-height: 1.78; color: #e8e8e8; }
+  #pop .pc {
+    margin: 9px 0 0; background: #0a0a0a; border: 1px solid #2f2f2f; border-radius: 7px;
+    padding: 8px 10px; font: 12px/1.65 Consolas, "Courier New", monospace;
+    color: #9cdcfe; white-space: pre-wrap; word-break: break-all;
+    max-height: 32vh; overflow: hidden;
+  }
+
+  /* ===== 透明热区 ===== */
+  .hotline, .hotarea { cursor: crosshair; }
+  .hotarea {
+    fill: #000; fill-opacity: 0; stroke: #000; stroke-width: 2; stroke-opacity: 0;
+    transition: fill-opacity .18s ease, stroke-opacity .18s ease;
+  }
+  .hotarea:hover, .hotarea.active {
+    fill: var(--ink-hot); fill-opacity: .10; stroke: var(--ink-hot);
+    stroke-opacity: .95; stroke-dasharray: 6 5;
+  }
+  .hotline { fill: none; stroke: #000; stroke-opacity: 0; transition: stroke-opacity .18s ease; }
+  .hotline:hover, .hotline.active { stroke: var(--ink-hot); stroke-opacity: .38; }
+
+  /* ===== 蓝色牵引线标注 ===== */
+  .callout { cursor: pointer; outline: none; }
+  .callout .ln {
+    fill: none; stroke: var(--ink); stroke-width: 3;
+    stroke-linecap: round; stroke-linejoin: round;
+    transition: stroke .18s ease, stroke-width .18s ease;
+  }
+  .callout .dot {
+    fill: var(--ink); stroke: #0b0b0b; stroke-width: 1.6;
+    transition: fill .18s ease, r .18s ease;
+  }
+  .callout .lbl {
+    fill: var(--ink);
+    font: 600 20px "Segoe Print", "Microsoft YaHei", cursive;
+    paint-order: stroke; stroke: #0b0b0b; stroke-width: 5; stroke-linejoin: round;
+    transition: fill .18s ease;
+  }
+  .callout .hit { fill: var(--ink); fill-opacity: 0; stroke: var(--ink); stroke-opacity: 0; }
+  .callout:hover .ln, .callout:focus .ln, .callout.active .ln { stroke: var(--ink-hot); stroke-width: 3.6; }
+  .callout:hover .dot, .callout:focus .dot, .callout.active .dot { fill: var(--ink-hot); }
+  .callout:hover .lbl, .callout:focus .lbl, .callout.active .lbl { fill: var(--ink-hot); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<p class="hint">蓝色牵引线 = 结构标注（如手绘图）。悬停 <b>线条 / 文字 / 对应区域</b> 弹出小框显示绘制原理，单击可钉住；也可用 <kbd>Tab</kbd> 聚焦标注、<kbd>Enter</kbd> 钉住、<kbd>Esc</kbd> 关闭。</p>
+<svg class="main" viewBox="-262 -70 1060 690" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A man in a suit raising both hands, captioned ABSOLUTE CINEMA, with blue callout labels">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6d6d6d"/>
+      <stop offset="0.55" stop-color="#2e2e2e"/>
+      <stop offset="1" stop-color="#0a0a0a"/>
+    </linearGradient>
+    <radialGradient id="vign" cx="0.5" cy="0.34" r="0.78">
+      <stop offset="0.5" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.6"/>
+    </radialGradient>
+    <linearGradient id="suit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#242424"/>
+      <stop offset="1" stop-color="#0e0e0e"/>
+    </linearGradient>
+    <pattern id="tiepat" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="9" height="9" fill="#4f4f4f"/>
+      <circle cx="4.5" cy="4.5" r="1.5" fill="#7d7d7d"/>
+    </pattern>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.7"/></feComponentTransfer>
+    </filter>
+  </defs>
+
+  <rect x="-262" y="-70" width="1060" height="690" fill="#0b0b0b"/>
+  <rect width="660" height="548" fill="url(#bg)"/>
+
+  <!-- armchair -->
+  <path d="M0 380 C46 366 96 368 122 392 L122 548 L0 548 Z" fill="#c9c9c9"/>
+  <path d="M660 380 C614 366 564 368 538 392 L538 548 L660 548 Z" fill="#c9c9c9"/>
+  <path d="M0 470 C60 442 100 448 122 470 L122 548 L0 548 Z" fill="#5a5a5a" opacity="0.55"/>
+  <path d="M660 470 C600 442 560 448 538 470 L538 548 L660 548 Z" fill="#5a5a5a" opacity="0.55"/>
+
+  <!-- jacket body -->
+  <path d="M330 296
+           L252 304 C214 314 190 338 172 378
+           C126 428 84 468 62 548
+           L598 548
+           C576 468 534 428 488 378
+           C470 338 446 314 408 304
+           L330 296 Z" fill="url(#suit)"/>
+  <path d="M330 296 L252 304 C214 314 190 338 172 378 C150 402 132 424 118 448 L204 402 C214 358 240 322 286 308 Z" fill="#2b2b2b" opacity="0.7"/>
+  <path d="M330 296 L408 304 C446 314 470 338 488 378 C510 402 528 424 542 448 L456 402 C446 358 420 322 374 308 Z" fill="#2b2b2b" opacity="0.7"/>
+
+  <!-- sleeves -->
+  <path d="M214 330 L104 142" stroke="#141414" stroke-width="78" stroke-linecap="round" fill="none"/>
+  <path d="M446 330 L556 142" stroke="#141414" stroke-width="78" stroke-linecap="round" fill="none"/>
+
+  <!-- cuffs -->
+  <rect x="62" y="128" width="78" height="34" rx="7" fill="#e9e9e9" transform="rotate(30 101 145)"/>
+  <rect x="520" y="128" width="78" height="34" rx="7" fill="#e9e9e9" transform="rotate(-30 559 145)"/>
+
+  <!-- watch on right wrist -->
+  <g transform="rotate(-30 568 178)">
+    <rect x="536" y="162" width="64" height="30" rx="6" fill="#101010"/>
+    <circle cx="552" cy="177" r="2.6" fill="#e8e8e8"/>
+    <circle cx="568" cy="177" r="2.6" fill="#e8e8e8"/>
+    <circle cx="584" cy="177" r="2.6" fill="#e8e8e8"/>
+  </g>
+
+  <!-- left hand -->
+  <g fill="#cfcfcf" stroke="#cfcfcf" stroke-linecap="round">
+    <ellipse cx="86" cy="102" rx="41" ry="46" transform="rotate(-15 86 102)" stroke="none"/>
+    <line x1="86" y1="102" x2="8"  y2="60"  stroke-width="27"/>
+    <line x1="86" y1="102" x2="34" y2="10"  stroke-width="20"/>
+    <line x1="86" y1="102" x2="78" y2="4"   stroke-width="20"/>
+    <line x1="86" y1="102" x2="122" y2="12" stroke-width="19"/>
+    <line x1="86" y1="102" x2="154" y2="42" stroke-width="17"/>
+  </g>
+  <g fill="none" stroke="#a6a6a6" stroke-linecap="round" opacity="0.8">
+    <path d="M62 76 Q58 96 66 116" stroke-width="3"/>
+    <path d="M92 70 Q90 92 96 114" stroke-width="3"/>
+  </g>
+
+  <!-- right hand -->
+  <g fill="#cfcfcf" stroke="#cfcfcf" stroke-linecap="round">
+    <ellipse cx="574" cy="102" rx="41" ry="46" transform="rotate(15 574 102)" stroke="none"/>
+    <line x1="574" y1="102" x2="652" y2="60"  stroke-width="27"/>
+    <line x1="574" y1="102" x2="626" y2="10"  stroke-width="20"/>
+    <line x1="574" y1="102" x2="582" y2="4"   stroke-width="20"/>
+    <line x1="574" y1="102" x2="538" y2="12"  stroke-width="19"/>
+    <line x1="574" y1="102" x2="506" y2="42"  stroke-width="17"/>
+  </g>
+  <g fill="none" stroke="#a6a6a6" stroke-linecap="round" opacity="0.8">
+    <path d="M598 76 Q602 96 594 116" stroke-width="3"/>
+    <path d="M568 70 Q570 92 564 114" stroke-width="3"/>
+  </g>
+
+  <!-- neck -->
+  <path d="M296 240 L296 302 Q330 320 364 302 L364 240 Z" fill="#9d9d9d"/>
+  <path d="M296 240 L296 282 Q330 302 364 282 L364 240 Z" fill="#8b8b8b"/>
+
+  <!-- shirt collar + V -->
+  <path d="M296 296 L330 344 L364 296 L352 288 L330 314 L308 288 Z" fill="#ececec"/>
+  <path d="M296 292 L330 322 L318 286 Z" fill="#dadada"/>
+  <path d="M364 292 L330 322 L342 286 Z" fill="#dadada"/>
+
+  <!-- tie -->
+  <path d="M318 320 L342 320 L338 340 L322 340 Z" fill="#6a6a6a"/>
+  <path d="M322 340 L338 340 L356 468 L330 502 L304 468 Z" fill="url(#tiepat)"/>
+  <path d="M322 340 L338 340 L332 356 L328 356 Z" fill="#3f3f3f" opacity="0.8"/>
+
+  <!-- lapels -->
+  <path d="M306 292 L330 338 L330 480 L284 366 C288 334 296 308 306 292 Z" fill="#202020"/>
+  <path d="M354 292 L330 338 L330 480 L376 366 C372 334 364 308 354 292 Z" fill="#202020"/>
+  <path d="M306 292 L330 338 L330 372 L298 320 Z" fill="#2d2d2d" opacity="0.8"/>
+  <path d="M354 292 L330 338 L330 372 L362 320 Z" fill="#2d2d2d" opacity="0.8"/>
+
+  <!-- visual left (image right side) head -->
+  <ellipse cx="260" cy="198" rx="13" ry="22" fill="#a9a9a9"/>
+  <ellipse cx="400" cy="198" rx="13" ry="22" fill="#a9a9a9"/>
+
+  <!-- face -->
+  <path d="M266 158
+           C266 112 296 98 330 98
+           C364 98 394 112 394 158
+           L394 196
+           C394 240 366 268 330 274
+           C294 268 266 240 266 196 Z" fill="#b8b8b8"/>
+  <path d="M266 158 C266 112 296 98 330 98 C340 98 348 99 356 102 C324 104 292 118 284 158 L284 214 C284 244 296 262 312 270 C288 262 266 240 266 196 Z" fill="#a9a9a9" opacity="0.7"/>
+  <path d="M340 102 C360 108 372 128 374 158 L374 200 C374 230 360 254 340 266 C362 250 370 230 370 200 L370 158 C370 132 358 112 340 102 Z" fill="#a3a3a3" opacity="0.55"/>
+
+  <!-- hair -->
+  <ellipse cx="264" cy="132" rx="15" ry="34" fill="#cfcfcf"/>
+  <ellipse cx="396" cy="132" rx="15" ry="34" fill="#cfcfcf"/>
+  <path d="M254 172
+           C246 116 272 78 330 72
+           C388 78 414 116 406 172
+           C400 142 392 124 374 116
+           C348 104 312 104 286 116
+           C268 124 260 142 254 172 Z" fill="#d8d8d8"/>
+  <path d="M282 96 Q316 84 352 92" stroke="#bdbdbd" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M276 112 Q312 100 362 108" stroke="#c4c4c4" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- brows -->
+  <path d="M282 180 Q300 170 318 174" stroke="#5e5e5e" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M378 180 Q360 170 342 174" stroke="#5e5e5e" stroke-width="7" fill="none" stroke-linecap="round"/>
+
+  <!-- eyes -->
+  <ellipse cx="302" cy="193" rx="13" ry="7" fill="#e4e4e4"/>
+  <ellipse cx="358" cy="193" rx="13" ry="7" fill="#e4e4e4"/>
+  <circle cx="303" cy="193" r="4.6" fill="#3c3c3c"/>
+  <circle cx="357" cy="193" r="4.6" fill="#3c3c3c"/>
+  <path d="M288 189 Q302 184 316 189" stroke="#8f8f8f" stroke-width="2.5" fill="none"/>
+  <path d="M344 189 Q358 184 372 189" stroke="#8f8f8f" stroke-width="2.5" fill="none"/>
+  <path d="M290 204 Q302 208 314 205" stroke="#989898" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M346 205 Q358 208 370 204" stroke="#989898" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+  <!-- nose -->
+  <path d="M330 186 L326 222 Q330 229 340 224" stroke="#8d8d8d" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M322 224 Q315 232 310 242" stroke="#9b9b9b" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M338 224 Q345 232 350 242" stroke="#9b9b9b" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- mouth + chin -->
+  <path d="M304 248 Q330 240 356 248" stroke="#7b7b7b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M312 258 Q330 262 348 258" stroke="#a2a2a2" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <rect width="660" height="548" fill="url(#vign)"/>
+  <rect width="660" height="548" filter="url(#grain)" opacity="0.3"/>
+
+  <!-- caption -->
+  <g text-anchor="middle" font-family="Impact, 'Arial Black', 'Segoe UI', sans-serif" font-weight="900" fill="#ffffff" stroke="#000000" paint-order="stroke">
+    <text x="330" y="428" font-size="48" stroke-width="8" textLength="322" lengthAdjust="spacingAndGlyphs">ABSOLUTE</text>
+    <text x="330" y="522" font-size="108" stroke-width="11" textLength="624" lengthAdjust="spacingAndGlyphs">CINEMA</text>
+  </g>
+
+  <!-- ===== 透明标注热区（只负责 hover 命中，不参与视觉） ===== -->
+  <g id="annos">
+    <rect class="hotarea" data-id="bg" x="0" y="0" width="660" height="548"/>
+    <path class="hotarea" data-id="chair" d="M0 380 C46 366 96 368 122 392 L122 548 L0 548 Z M660 380 C614 366 564 368 538 392 L538 548 L660 548 Z"/>
+    <path class="hotarea" data-id="suit" d="M330 296 L252 304 C214 314 190 338 172 378 C126 428 84 468 62 548 L598 548 C576 468 534 428 488 378 C470 338 446 314 408 304 L330 296 Z"/>
+    <path class="hotline" data-id="sleeve" d="M214 330 L104 142" stroke-width="96"/>
+    <path class="hotline" data-id="sleeve" d="M446 330 L556 142" stroke-width="96"/>
+    <rect class="hotarea" data-id="cuff" x="62" y="128" width="78" height="34" rx="7" transform="rotate(30 101 145)"/>
+    <rect class="hotarea" data-id="cuff" x="520" y="128" width="78" height="34" rx="7" transform="rotate(-30 559 145)"/>
+    <rect class="hotarea" data-id="watch" x="530" y="154" width="76" height="46" rx="8" transform="rotate(-30 568 178)"/>
+    <ellipse class="hotarea" data-id="hands" cx="86" cy="95" rx="100" ry="92"/>
+    <ellipse class="hotarea" data-id="hands" cx="574" cy="95" rx="100" ry="92"/>
+    <ellipse class="hotarea" data-id="head" cx="330" cy="190" rx="72" ry="98"/>
+    <path class="hotarea" data-id="hair" d="M254 172 C246 116 272 78 330 72 C388 78 414 116 406 172 C400 142 392 124 374 116 C348 104 312 104 286 116 C268 124 260 142 254 172 Z"/>
+    <ellipse class="hotarea" data-id="face5" cx="302" cy="190" rx="20" ry="21"/>
+    <ellipse class="hotarea" data-id="face5" cx="358" cy="190" rx="20" ry="21"/>
+    <ellipse class="hotarea" data-id="face5" cx="330" cy="228" rx="24" ry="42"/>
+    <path class="hotarea" data-id="shirt" d="M292 284 L330 324 L368 284 L368 300 L330 348 L292 300 Z"/>
+    <path class="hotarea" data-id="lapel" d="M306 292 L330 338 L330 480 L284 366 C288 334 296 308 306 292 Z"/>
+    <path class="hotarea" data-id="lapel" d="M354 292 L330 338 L330 480 L376 366 C372 334 364 308 354 292 Z"/>
+    <path class="hotarea" data-id="tie" d="M316 318 L344 318 L356 468 L330 502 L304 468 Z"/>
+    <rect class="hotarea" data-id="caption" x="158" y="384" width="344" height="150"/>
+    <circle class="hotarea" data-id="grain" cx="24" cy="40" r="24"/>
+  </g>
+
+  <!-- ===== 蓝色牵引线标注（悬停线/文字/区域均可触发，Tab 可聚焦） ===== -->
+  <g id="callouts">
+    <!-- 左列 -->
+    <g class="callout" data-id="grain" tabindex="0" role="button" aria-label="标注：颗粒，查看绘制原理">
+      <polyline class="hit" points="24,40 -60,-25 -168,-25" stroke-width="20"/>
+      <polyline class="ln" points="24,40 -60,-25 -168,-25"/>
+      <circle class="dot" cx="24" cy="40" r="4.5"/>
+      <rect class="hit" x="-212" y="-43" width="54" height="36"/>
+      <text class="lbl" x="-158" y="-19" text-anchor="end">颗粒</text>
+    </g>
+    <g class="callout" data-id="hands" tabindex="0" role="button" aria-label="标注：双手，查看绘制原理">
+      <polyline class="hit" points="85,66 -20,40 -168,40" stroke-width="20"/>
+      <polyline class="ln" points="85,66 -20,40 -168,40"/>
+      <circle class="dot" cx="85" cy="66" r="4.5"/>
+      <rect class="hit" x="-212" y="22" width="54" height="36"/>
+      <text class="lbl" x="-158" y="46" text-anchor="end">双手</text>
+    </g>
+    <g class="callout" data-id="cuff" tabindex="0" role="button" aria-label="标注：白袖口，查看绘制原理">
+      <polyline class="hit" points="108,142 0,170 -168,170" stroke-width="20"/>
+      <polyline class="ln" points="108,142 0,170 -168,170"/>
+      <circle class="dot" cx="108" cy="142" r="4.5"/>
+      <rect class="hit" x="-231" y="152" width="73" height="36"/>
+      <text class="lbl" x="-158" y="176" text-anchor="end">白袖口</text>
+    </g>
+    <g class="callout" data-id="head" tabindex="0" role="button" aria-label="标注：脸部轮廓，查看绘制原理">
+      <polyline class="hit" points="262,214 140,245 -168,245" stroke-width="20"/>
+      <polyline class="ln" points="262,214 140,245 -168,245"/>
+      <circle class="dot" cx="262" cy="214" r="4.5"/>
+      <rect class="hit" x="-250" y="227" width="92" height="36"/>
+      <text class="lbl" x="-158" y="251" text-anchor="end">脸部轮廓</text>
+    </g>
+    <g class="callout" data-id="sleeve" tabindex="0" role="button" aria-label="标注：袖子，查看绘制原理">
+      <polyline class="hit" points="170,270 40,305 -168,305" stroke-width="20"/>
+      <polyline class="ln" points="170,270 40,305 -168,305"/>
+      <circle class="dot" cx="170" cy="270" r="4.5"/>
+      <rect class="hit" x="-212" y="287" width="54" height="36"/>
+      <text class="lbl" x="-158" y="311" text-anchor="end">袖子</text>
+    </g>
+    <g class="callout" data-id="suit" tabindex="0" role="button" aria-label="标注：西装主体，查看绘制原理">
+      <polyline class="hit" points="140,450 20,400 -168,400" stroke-width="20"/>
+      <polyline class="ln" points="140,450 20,400 -168,400"/>
+      <circle class="dot" cx="140" cy="450" r="4.5"/>
+      <rect class="hit" x="-250" y="382" width="92" height="36"/>
+      <text class="lbl" x="-158" y="406" text-anchor="end">西装主体</text>
+    </g>
+    <g class="callout" data-id="chair" tabindex="0" role="button" aria-label="标注：椅背，查看绘制原理">
+      <polyline class="hit" points="48,505 -20,520 -168,520" stroke-width="20"/>
+      <polyline class="ln" points="48,505 -20,520 -168,520"/>
+      <circle class="dot" cx="48" cy="505" r="4.5"/>
+      <rect class="hit" x="-212" y="502" width="54" height="36"/>
+      <text class="lbl" x="-158" y="526" text-anchor="end">椅背</text>
+    </g>
+    <g class="callout" data-id="bg" tabindex="0" role="button" aria-label="标注：背景暗角，查看绘制原理">
+      <polyline class="hit" points="18,368 -60,570 -168,570" stroke-width="20"/>
+      <polyline class="ln" points="18,368 -60,570 -168,570"/>
+      <circle class="dot" cx="18" cy="368" r="4.5"/>
+      <rect class="hit" x="-250" y="564" width="92" height="36"/>
+      <text class="lbl" x="-158" y="588" text-anchor="end">背景暗角</text>
+    </g>
+    <!-- 顶列 -->
+    <g class="callout" data-id="hair" tabindex="0" role="button" aria-label="标注：头发，查看绘制原理">
+      <polyline class="hit" points="315,72 330,20 330,-18" stroke-width="20"/>
+      <polyline class="ln" points="315,72 330,20 330,-18"/>
+      <circle class="dot" cx="315" cy="72" r="4.5"/>
+      <rect class="hit" x="298" y="-52" width="64" height="36"/>
+      <text class="lbl" x="330" y="-28" text-anchor="middle">头发</text>
+    </g>
+    <!-- 右列 -->
+    <g class="callout" data-id="watch" tabindex="0" role="button" aria-label="标注：手表，查看绘制原理">
+      <polyline class="hit" points="566,172 630,155 668,155" stroke-width="20"/>
+      <polyline class="ln" points="566,172 630,155 668,155"/>
+      <circle class="dot" cx="566" cy="172" r="4.5"/>
+      <rect class="hit" x="672" y="137" width="54" height="36"/>
+      <text class="lbl" x="678" y="161">手表</text>
+    </g>
+    <g class="callout" data-id="face5" tabindex="0" role="button" aria-label="标注：五官，查看绘制原理">
+      <polyline class="hit" points="358,193 500,225 668,225" stroke-width="20"/>
+      <polyline class="ln" points="358,193 500,225 668,225"/>
+      <circle class="dot" cx="358" cy="193" r="4.5"/>
+      <rect class="hit" x="672" y="207" width="54" height="36"/>
+      <text class="lbl" x="678" y="231">五官</text>
+    </g>
+    <g class="callout" data-id="shirt" tabindex="0" role="button" aria-label="标注：衬衫领口，查看绘制原理">
+      <polyline class="hit" points="320,315 430,285 668,285" stroke-width="20"/>
+      <polyline class="ln" points="320,315 430,285 668,285"/>
+      <circle class="dot" cx="320" cy="315" r="4.5"/>
+      <rect class="hit" x="672" y="267" width="92" height="36"/>
+      <text class="lbl" x="678" y="291">衬衫领口</text>
+    </g>
+    <g class="callout" data-id="tie" tabindex="0" role="button" aria-label="标注：领带，查看绘制原理">
+      <polyline class="hit" points="336,380 450,350 668,350" stroke-width="20"/>
+      <polyline class="ln" points="336,380 450,350 668,350"/>
+      <circle class="dot" cx="336" cy="380" r="4.5"/>
+      <rect class="hit" x="672" y="332" width="54" height="36"/>
+      <text class="lbl" x="678" y="356">领带</text>
+    </g>
+    <g class="callout" data-id="lapel" tabindex="0" role="button" aria-label="标注：翻领，查看绘制原理">
+      <polyline class="hit" points="362,430 470,410 668,410" stroke-width="20"/>
+      <polyline class="ln" points="362,430 470,410 668,410"/>
+      <circle class="dot" cx="362" cy="430" r="4.5"/>
+      <rect class="hit" x="672" y="392" width="54" height="36"/>
+      <text class="lbl" x="678" y="416">翻领</text>
+    </g>
+    <g class="callout" data-id="caption" tabindex="0" role="button" aria-label="标注：标题字，查看绘制原理">
+      <polyline class="hit" points="480,490 560,520 668,520" stroke-width="20"/>
+      <polyline class="ln" points="480,490 560,520 668,520"/>
+      <circle class="dot" cx="480" cy="490" r="4.5"/>
+      <rect class="hit" x="672" y="502" width="73" height="36"/>
+      <text class="lbl" x="678" y="526">标题字</text>
+    </g>
+  </g>
+</svg>
+</div>
+
+<div id="pop" role="status">
+  <div class="pt"></div>
+  <div class="pd"></div>
+  <pre class="pc"></pre>
+</div>
+
+<script>
+const DATA = {
+  bg: { n:1, t:'背景与暗角',
+    d:'两条整幅矩形叠加：纵向线性渐变 #6d6d6d→#0a0a0a 模拟棚拍灯光由亮压暗；再用径向渐变铺一层黑色暗角（中心透明、边缘 60% 黑），把视线压向中心人物。',
+    c:'linearGradient y1=0 → y2=1（顶亮底暗）\nradialGradient cx=.5 cy=.34 + 边缘黑 60%\n<rect fill="url(#bg)"/> + <rect fill="url(#vign)"/>' },
+  chair: { n:2, t:'椅背',
+    d:'左右各一条闭合贝塞尔路径（C 曲线）勾出椅背圆弧，直接填浅灰 #c9c9c9；再叠半透明深灰路径当作座面阴影。人物画在其上，自然形成遮挡关系。',
+    c:'<path d="M0 380 C46 366 96 368 122 392 L122 548 ..." fill="#c9c9c9"/>\n座面阴影：同形 path fill="#5a5a5a" opacity=".55"' },
+  suit: { n:3, t:'西装主体',
+    d:'一条闭合路径从领口绕双肩到底边：M 定位 → C 画肩线弧 → L 收底 → Z 闭合，填充纵向渐变；两侧再叠 opacity .7 的亮部路径，伪造布料受光面的明暗。',
+    c:'<path d="M330 296 L252 304 C214 314 ... L598 548 Z" fill="url(#suit)"/>\n亮面：<path fill="#2b2b2b" opacity=".7"/>' },
+  sleeve: { n:4, t:'袖子',
+    d:'不画轮廓，直接用一条直线当骨架：stroke-width:78 + stroke-linecap:round，粗描边的圆头自动生成肩部与手腕的圆角，等价于一根胶囊。手臂角度由两端点坐标控制。',
+    c:'<path d="M214 330 L104 142" stroke="#141414"\n      stroke-width="78" stroke-linecap="round"/>' },
+  cuff: { n:5, t:'白袖口',
+    d:'矩形 rx 圆角 + transform rotate(30°)，把矩形轴线转成与手臂方向垂直，正好卡在袖管末端；左右旋转角度互为相反数做镜像。',
+    c:'<rect x="62" y="128" width="78" height="34" rx="7"\n      fill="#e9e9e9" transform="rotate(30 101 145)"/>' },
+  watch: { n:6, t:'手表',
+    d:'在 rotate(-30°) 的局部坐标系里摆放：一个圆角矩形当表带，三个小圆点当表盘刻度。整个坐标系跟着手腕角度走，不用手工计算旋转后的坐标。',
+    c:'<g transform="rotate(-30 568 178)">\n  <rect x="536" y="162" width="64" height="30" rx="6"/>\n  <circle cx="552" cy="177" r="2.6"/> ×3\n</g>' },
+  hands: { n:7, t:'双手',
+    d:'手掌 = 一个椭圆；五根手指 = 五条粗圆头线段（stroke-width 17~27 + linecap:round），张开的扇形角度完全由每根手指的终点坐标决定，左右手套用镜像坐标。',
+    c:'<ellipse cx="86" cy="102" rx="41" ry="46" transform="rotate(-15 86 102)"/>\n<line x1="86" y1="102" x2="34" y2="10" stroke-width="20"/>\n其余四指同理，只改终点与线宽' },
+  head: { n:8, t:'头部（脸/颈/耳）',
+    d:'脸部是一条闭合贝塞尔路径：C 曲线依次连接额头、颧骨、下颌、下巴；颈部另画一条 path；再叠两条半透明白/灰路径做脸颊体积，无光照计算，纯手调明暗。耳朵是两个椭圆。',
+    c:'<path d="M266 158 C266 112 296 98 330 98 C364 98 394 112 394 158\n         L394 196 C394 240 366 268 330 274 C294 268 266 240 266 196 Z"\n      fill="#b8b8b8"/>' },
+  hair: { n:9, t:'头发',
+    d:'浅灰闭合路径罩住头顶，发际线用 C 曲线收边（中间高、两侧低）；两条低饱和度细描边充当发丝高光，两侧再用椭圆补鬓角体积。',
+    c:'<path d="M254 172 C246 116 272 78 330 72 C388 78 414 116 406 172 ..."\n      fill="#d8d8d8"/>\n发丝：<path stroke="#bdbdbd" stroke-width="4" fill="none"/>' },
+  face5: { n:10, t:'五官',
+    d:'全部是 fill:none 的细描边曲线：眉毛用 Q 曲线加粗到 7px 表现川字纹；鼻梁、鼻翼、唇线、法令纹、眼袋各一条 stroke；眼球 = ellipse 眼白 + circle 瞳孔。',
+    c:'<path d="M282 180 Q300 170 318 174" stroke="#5e5e5e" stroke-width="7" fill="none"/>\n<ellipse cx="302" cy="193" rx="13" ry="7" fill="#e4e4e4"/>\n<circle cx="303" cy="193" r="4.6" fill="#3c3c3c"/>' },
+  shirt: { n:11, t:'衬衫领口',
+    d:'两片领子 = 两个三角形 path，中间 V 形白色路径压住脖子下缘，与深色西装形成强对比；明度上比西装主体高几个阶梯，靠色差拉开层次。',
+    c:'<path d="M296 296 L330 344 L364 296 L352 288 L330 314 L308 288 Z" fill="#ececec"/>\n<path d="M296 292 L330 322 L318 286 Z" fill="#dadada"/>' },
+  tie: { n:12, t:'领带',
+    d:'打结处是一个小四边形 path，领带主体是下宽上窄的梯形 path，用 fill=url(#tiepat) 引用图案；花纹本身是一个 rotate(45°) 的点阵 pattern，斜向重复。',
+    c:'<pattern id="tiepat" patternTransform="rotate(45)">\n  <rect fill="#4f4f4f"/><circle r="1.5" fill="#7d7d7d"/>\n</pattern>\n<path d="M322 340 L338 340 L356 468 L330 502 L304 468 Z" fill="url(#tiepat)"/>' },
+  lapel: { n:13, t:'西装翻领',
+    d:'左右各一条 path，颜色比西装主体更黑（#202020）形成镶边轮廓；内侧再叠一层 #2d2d2d 提亮折面，制造翻领的立体转折，绘制顺序放在衬衫和领带之上。',
+    c:'<path d="M306 292 L330 338 L330 480 L284 366 C288 334 296 308 306 292 Z"\n      fill="#202020"/>\n折面：<path fill="#2d2d2d" opacity=".8"/>' },
+  caption: { n:14, t:'标题字',
+    d:'paint-order:stroke 让黑色描边垫在白色填色之下，字就有了干净外轮廓；textLength + lengthAdjust="spacingAndGlyphs" 强制文字拉伸到指定宽度，换任何字体都能撑满全宽、不跑版。',
+    c:'<text x="330" y="522" font-size="108" stroke-width="11"\n      paint-order="stroke" textLength="624"\n      lengthAdjust="spacingAndGlyphs">CINEMA</text>' },
+  grain: { n:15, t:'胶片颗粒',
+    d:'SVG 滤镜合成：feTurbulence 生成分形噪声（baseFrequency 0.9）→ feColorMatrix 去饱和成灰度 → feFuncA 调透明度，整层以 30% 不透明度覆盖全图，得到黑白照片的颗粒质感。',
+    c:'<filter id="grain">\n  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/>\n  <feColorMatrix type="saturate" values="0"/>\n</filter>\n<rect width="660" height="548" filter="url(#grain)" opacity="0.3"/>' }
+};
+
+const pop = document.getElementById('pop');
+const pt = pop.querySelector('.pt'), pd = pop.querySelector('.pd'), pc = pop.querySelector('.pc');
+let curId = null, pinned = false;
+
+function setActive(id, on) {
+  document.querySelectorAll('[data-id="' + id + '"]').forEach(el => el.classList.toggle('active', on));
+}
+function clearActive() {
+  document.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+}
+function movePop(x, y) {
+  const w = pop.offsetWidth, h = pop.offsetHeight;
+  let px = x + 18, py = y + 18;
+  if (px + w > innerWidth - 10) px = x - w - 18;
+  if (px < 10) px = 10;
+  if (py + h > innerHeight - 10) py = innerHeight - h - 10;
+  if (py < 10) py = 10;
+  pop.style.left = px + 'px';
+  pop.style.top = py + 'px';
+}
+function show(id, x, y) {
+  const a = DATA[id];
+  if (!a) return;
+  pt.textContent = '#' + a.n + ' ' + a.t;
+  pd.textContent = a.d;
+  pc.textContent = a.c;
+  pop.style.display = 'block';
+  movePop(x, y);
+}
+function showAtEl(id, el) {
+  const r = el.getBoundingClientRect();
+  show(id, r.left + r.width / 2, r.top + r.height / 2);
+}
+function hidePop(force) {
+  if (pinned && !force) return;
+  pop.style.display = 'none';
+}
+function togglePin(id, x, y) {
+  if (pinned && curId === id) {
+    pinned = false; setActive(id, false); hidePop(true); curId = null;
+  } else {
+    if (curId && curId !== id) setActive(curId, false);
+    pinned = true; curId = id; setActive(id, true); show(id, x, y);
+  }
+}
+function unpinAll() {
+  pinned = false; hidePop(true); curId = null; clearActive();
+}
+
+document.querySelectorAll('[data-id]').forEach(el => {
+  const id = el.dataset.id;
+  el.addEventListener('mouseenter', e => {
+    if (curId && curId !== id) setActive(curId, false);
+    curId = id;
+    setActive(id, true);
+    show(id, e.clientX, e.clientY);
+  });
+  el.addEventListener('mousemove', e => { if (curId === id) movePop(e.clientX, e.clientY); });
+  el.addEventListener('mouseleave', () => {
+    if (pinned) return;
+    setActive(id, false);
+    hidePop();
+    curId = null;
+  });
+  el.addEventListener('click', e => {
+    e.stopPropagation();
+    togglePin(id, e.clientX, e.clientY);
+  });
+  /* 键盘可访问性：聚焦标注同样弹出小框 */
+  el.addEventListener('focus', () => {
+    if (curId && curId !== id) setActive(curId, false);
+    curId = id;
+    setActive(id, true);
+    showAtEl(id, el);
+  });
+  el.addEventListener('blur', () => {
+    if (pinned) return;
+    setActive(id, false);
+    hidePop();
+    curId = null;
+  });
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      e.stopPropagation();
+      const r = el.getBoundingClientRect();
+      togglePin(id, r.left + r.width / 2, r.top + r.height / 2);
+    }
+  });
+});
+
+document.addEventListener('click', () => { if (pinned) unpinAll(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && (pinned || pop.style.display === 'block')) unpinAll();
+});
+</script>
+</body>
+</html>
