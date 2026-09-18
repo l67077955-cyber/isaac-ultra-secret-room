@@ -13,6 +13,7 @@ with no external dependencies and no build step, served via GitHub Pages.
 | 01 | Ultra Secret Room Field Guide | [Demo](https://l67077955-cyber.github.io/vibe-coding-showcase/isaac-ultra-secret-room/) | An interactive guide to the Ultra Secret Room in *The Binding of Isaac: Repentance+*, featuring a floor-plan simulator that generates layouts according to the game's actual placement rules |
 | 02 | CS:GO Web | [Demo](https://l67077955-cyber.github.io/vibe-coding-showcase/csgo-web/) | A compact browser FPS demo inspired by *Counter-Strike: Global Offensive*, featuring 3D canvas rendering and audio in a single self-contained file |
 | 03 | Angry Birds Web | [Demo](https://l67077955-cyber.github.io/vibe-coding-showcase/angry-birds/) | A single-file *Angry Birds* clone featuring an inlined physics engine and multiple levels |
+| 04 | Absolute Cinema — Pure SVG Redraw | [Demo](https://l67077955-cyber.github.io/vibe-coding-showcase/absolute-cinema/) | The *ABSOLUTE CINEMA* meme rebuilt entirely from hand-coded inline SVG shapes — no bitmap, no pixel tracing — with blue engineering callouts that explain each drawing technique on hover |
 
 ## Principles
 
